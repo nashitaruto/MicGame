@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -11,20 +12,24 @@ public class PlayerController : MonoBehaviour
     public float MoveSpeed;
     private Animator anim;
     GameObject mic;
+    GameObject npc;
+    private float coefficient = 3.0f;
+    private float speed = 10.0f;
 
-    // Use this for initialization
     void Start()
     {
         mic = GameObject.Find("Mic");
+        npc = GameObject.Find("ZombieNPC");
         characterController = GetComponent<CharacterController>();
         GetComponent<SphereCollider>().enabled = false;
+
         anim = GetComponent<Animator>();
         anim.SetBool("Run", false);
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //移動
         float X_Rotation = Input.GetAxis("Mouse X");
         float Y_Rotation = Input.GetAxis("Mouse Y");
         horRot.transform.Rotate(new Vector3(0, X_Rotation * 2, 0));
@@ -73,12 +78,30 @@ public class PlayerController : MonoBehaviour
             {
                 anim.SetBool("Run", false);
             }
-        //characterController.Move(Velocity);
 
+        characterController.Move(Velocity);
+        
+        //音の衝突判定のon off
         MicVolume volumeRate = mic.GetComponent<MicVolume>();
         if (volumeRate.m_volumeRate >= 0.8)
         {
             GetComponent<SphereCollider>().enabled = true;
+        }
+        else
+        {
+            GetComponent<SphereCollider>().enabled = false;
+        }
+    }
+    //範囲内のNPCを吹き飛ばす
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.tag == "NPC")
+        {
+            //Rigidbody rb = npc.GetComponent<Rigidbody>();
+            //var rb = GetComponent<Rigidbody>();
+            //var velocity = (collision.transform.position - this.transform.position).normalized * speed;
+            //rb.Force(coefficient * velocity, ForceMode.Impulse);
+            //rb.AddExplosionForce(10, this.transform.position, 4);
         }
     }
 }
