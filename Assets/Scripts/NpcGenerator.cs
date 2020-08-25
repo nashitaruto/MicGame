@@ -1,4 +1,52 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
+
+public class NpcGenerator : MonoBehaviour
+{
+
+    [SerializeField] GameObject[] enemys;
+    [SerializeField] float appearNextTime;
+    [SerializeField] int maxNumOfEnemys;
+    private int numberOfEnemys;
+    private float elapsedTime;
+
+    void Start()
+    {
+        numberOfEnemys = 0;
+        elapsedTime = 0f;
+    }
+    void Update()
+    {
+        if (numberOfEnemys >= maxNumOfEnemys)
+        {
+            return;
+        }
+        elapsedTime += Time.deltaTime;
+
+        if (elapsedTime > appearNextTime)
+        {
+            elapsedTime = 0f;
+
+            AppearEnemy();
+        }
+    }
+    void AppearEnemy()
+    {
+        var randomValue = Random.Range(0, enemys.Length);
+        var randomRotationY = Random.value * 360f;
+
+        GameObject.Instantiate(enemys[randomValue], transform.position, Quaternion.Euler(0f, randomRotationY, 0f));
+
+        numberOfEnemys++;
+        elapsedTime = 0f;
+    }
+}
+
+
+
+
+
+/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,4 +72,4 @@ public class NpcGenerator : MonoBehaviour
     {
         
     }
-}
+}*/
