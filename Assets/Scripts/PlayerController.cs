@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,15 +12,13 @@ public class PlayerController : MonoBehaviour
     public Transform horRot;
     public float MoveSpeed;
     private Animator anim;
+    private GameObject stateText;
     GameObject mic;
-    GameObject npc;
-    private float coefficient = 3.0f;
-    private float speed = 10.0f;
 
     void Start()
     {
         mic = GameObject.Find("Mic");
-        npc = GameObject.Find("ZombieNPC");
+        this.stateText = GameObject.Find("GameResultText");
         characterController = GetComponent<CharacterController>();
         GetComponent<SphereCollider>().enabled = false;
 
@@ -92,16 +91,13 @@ public class PlayerController : MonoBehaviour
             GetComponent<SphereCollider>().enabled = false;
         }
     }
-    //範囲内のNPCを吹き飛ばす
-    void OnCollisionStay(Collision collision)
+    private void OnTriggerEnter(Collider col)
     {
-        if (collision.gameObject.tag == "NPC")
+        if (col.gameObject.tag == "GoalTag")
         {
-            //Rigidbody rb = npc.GetComponent<Rigidbody>();
-            //var rb = GetComponent<Rigidbody>();
-            //var velocity = (collision.transform.position - this.transform.position).normalized * speed;
-            //rb.Force(coefficient * velocity, ForceMode.Impulse);
-            //rb.AddExplosionForce(10, this.transform.position, 4);
+            this.stateText.GetComponent<Text>().text = "CLEAR!!";
+            anim.SetBool("Run", false);
+            this.GetComponent<PlayerController>().enabled = false;
         }
     }
 }
