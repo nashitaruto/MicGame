@@ -25,8 +25,8 @@ public class NpcGenerator : MonoBehaviour
 
         if (elapsedTime > appearNextTime)
         {
+            float appearNextTime = Random.Range(1.0f, 8.0f);
             elapsedTime = 0f;
-
             AppearEnemy();
         }
     }
@@ -41,9 +41,6 @@ public class NpcGenerator : MonoBehaviour
         elapsedTime = 0f;
     }
 }
-
-
-
 
 
 /*using System.Collections;

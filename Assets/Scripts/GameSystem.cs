@@ -4,13 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class GameSystem : MonoBehaviour
 {
-
-    //　スタートボタンを押したら実行する
     public void StartGame()
     {
         SceneManager.LoadScene("GameScene");
     }
-
     public void EndGame()
     {
 #if UNITY_EDITOR

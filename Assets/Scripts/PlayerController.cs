@@ -5,15 +5,13 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-
+    public FloatingJoystick joystick;
     private CharacterController characterController;
-    private Vector3 Velocity;
-    public Transform verRot;
-    public Transform horRot;
     public float MoveSpeed;
     private Animator anim;
     private GameObject stateText;
     GameObject mic;
+    GameObject backtomenu;
 
     void Start()
     {
@@ -24,16 +22,50 @@ public class PlayerController : MonoBehaviour
 
         anim = GetComponent<Animator>();
         anim.SetBool("Run", false);
+
+        backtomenu = GameObject.Find("BacktoMenu");
     }
 
     void Update()
     {
         //移動
-        float X_Rotation = Input.GetAxis("Mouse X");
-        float Y_Rotation = Input.GetAxis("Mouse Y");
-        horRot.transform.Rotate(new Vector3(0, X_Rotation * 2, 0));
-        verRot.transform.Rotate(-Y_Rotation * 2, 0, 0);
+        float E_Rotation = Input.GetAxis("Mouse X");
+        float E_Position = Input.GetAxis("Mouse Y");
+        float P_Rotation = joystick.Horizontal;
+        float P_Position = joystick.Vertical;
+        //スマホ
+        if (joystick.Vertical > 0)
+        {
+            characterController.Move(this.gameObject.transform.forward * MoveSpeed * Time.deltaTime);
+            anim.SetBool("Run", true);
+        }
 
+        if (joystick.Vertical < 0)
+        {
+            characterController.Move(this.gameObject.transform.forward * -1f * MoveSpeed * Time.deltaTime);
+            anim.SetBool("Run", true);
+        }
+
+        if (joystick.Horizontal > 0)
+        {
+            this.transform.Rotate(0, P_Rotation, 0);
+            //anim.SetBool("Run", false);
+        }
+
+        if (joystick.Horizontal < 0)
+        {
+            this.transform.Rotate(0, P_Rotation * 1.0f, 0);
+            //anim.SetBool("Run", false);
+        }
+
+        if (joystick.Vertical == 0 && joystick.Horizontal == 0)
+        {
+            anim.SetBool("Run", false);
+        }
+
+        //PC
+        if (Application.isEditor)
+        {
             if (Input.GetKey(KeyCode.W))
             {
                 characterController.Move(this.gameObject.transform.forward * MoveSpeed * Time.deltaTime);
@@ -77,11 +109,10 @@ public class PlayerController : MonoBehaviour
             {
                 anim.SetBool("Run", false);
             }
+        }
 
-        characterController.Move(Velocity);
-        
-        //音の衝突判定のon off
-        MicVolume volumeRate = mic.GetComponent<MicVolume>();
+            //音の衝突判定のon off
+            MicVolume volumeRate = mic.GetComponent<MicVolume>();
         if (volumeRate.m_volumeRate >= 0.8)
         {
             GetComponent<SphereCollider>().enabled = true;
@@ -91,12 +122,14 @@ public class PlayerController : MonoBehaviour
             GetComponent<SphereCollider>().enabled = false;
         }
     }
+    //ゴール時の処理
     private void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.tag == "GoalTag")
         {
             this.stateText.GetComponent<Text>().text = "CLEAR!!";
             anim.SetBool("Run", false);
+            backtomenu.GetComponent<BacktoMenu>().isFadeOut = true;
             this.GetComponent<PlayerController>().enabled = false;
         }
     }

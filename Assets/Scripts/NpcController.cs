@@ -17,17 +17,23 @@ public class NpcController : MonoBehaviour
     public float MoveSpeed;
     GameObject playercontroller;
     private GameObject gameoverText;
+    [SerializeField] AudioClip[] clips;
+    [SerializeField] float pitchRange = 0.1f;
+    protected AudioSource source;
+    GameObject backtomenu;
 
     void Start()
     {
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
+        source = GetComponents<AudioSource>()[0];
         rigidBody = GetComponent<Rigidbody>();
         player = GameObject.Find("Player");
         gameoverText = GameObject.Find("GameOverText");
 
         defaultMoveSpeed = agent.speed;
         MoveSpeed = defaultMoveSpeed;
+        backtomenu = GameObject.Find("BacktoMenu");
     }
 
     void Update()
@@ -71,6 +77,7 @@ public class NpcController : MonoBehaviour
             player.GetComponent<PlayerController>().enabled = false;
             anim.speed = 0;
             gameoverText.GetComponent<Text>().text = "GAME OVER";
+            backtomenu.GetComponent<BacktoMenu>().isFadeOut = true;
         }
     }
     void OnTriggerEnter(Collider col)
@@ -80,5 +87,10 @@ public class NpcController : MonoBehaviour
         anim.speed = 1;
         anim.SetBool("Death", true);
         Destroy(this.gameObject, lifeTime);
+    }
+    public void PlaySE()
+    {
+        source.pitch = 1.0f + Random.Range(-pitchRange, pitchRange);
+        source.PlayOneShot(clips[Random.Range(0, clips.Length)]);
     }
 }
