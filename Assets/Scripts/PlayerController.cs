@@ -49,13 +49,11 @@ public class PlayerController : MonoBehaviour
         if (joystick.Horizontal > 0)
         {
             this.transform.Rotate(0, P_Rotation, 0);
-            //anim.SetBool("Run", false);
         }
 
         if (joystick.Horizontal < 0)
         {
             this.transform.Rotate(0, P_Rotation * 1.0f, 0);
-            //anim.SetBool("Run", false);
         }
 
         if (joystick.Vertical == 0 && joystick.Horizontal == 0)
@@ -113,7 +111,7 @@ public class PlayerController : MonoBehaviour
 
             //音の衝突判定のon off
             MicVolume volumeRate = mic.GetComponent<MicVolume>();
-        if (volumeRate.m_volumeRate >= 0.8)
+        if (volumeRate.m_volumeRate >= 0.1)
         {
             GetComponent<SphereCollider>().enabled = true;
         }
@@ -122,8 +120,15 @@ public class PlayerController : MonoBehaviour
             GetComponent<SphereCollider>().enabled = false;
         }
     }
-    //ゴール時の処理
-    private void OnTriggerEnter(Collider col)
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "NPC")
+        {
+            anim.speed = 0;
+        }
+    }
+            //ゴール時の処理
+            private void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.tag == "GoalTag")
         {

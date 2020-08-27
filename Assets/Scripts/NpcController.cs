@@ -75,16 +75,15 @@ public class NpcController : MonoBehaviour
             //ゲームオーバー処理
             var gameover = player.GetComponent<PlayerController>();
             player.GetComponent<PlayerController>().enabled = false;
-            anim.speed = 0;
             gameoverText.GetComponent<Text>().text = "GAME OVER";
             backtomenu.GetComponent<BacktoMenu>().isFadeOut = true;
+            anim.SetBool("Attack", true);
         }
     }
     void OnTriggerEnter(Collider col)
     {
         var rb = GetComponent<Rigidbody>();
-        rb.AddExplosionForce(500, player.transform.position, 4);
-        anim.speed = 1;
+        rb.AddExplosionForce(1000f, player.transform.position, 4);
         anim.SetBool("Death", true);
         Destroy(this.gameObject, lifeTime);
     }
